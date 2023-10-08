@@ -1,0 +1,18 @@
+{
+  "name": "solidity-interface",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^20.8.3",
+    "commander": "^11.0.0",
+    "figlet": "^1.6.0",
+    "typescript": "^5.2.2"
+  }
+}
