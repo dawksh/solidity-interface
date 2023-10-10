@@ -4,7 +4,7 @@
   "description": "A simple CLI to generate Solidity interfaces from contract files.",
   "main": "dist/index.js",
   "bin": {
-    "dirmanager": "./dist/index.js"
+    "solidity-interface": "./dist/index.js"
   },
   "scripts": {
     "build": "npx tsc"
