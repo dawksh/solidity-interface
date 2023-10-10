@@ -13,18 +13,43 @@ program.parse(process.argv);
 const options = program.opts();
 
 
-const extractSolidityInterface = (filePath: string) => {
-    const solidityCode: string = fs.readFileSync(filePath, 'utf-8');
-    const interfacePattern: RegExp = /interface\s+(\w+)\s*\{([\s\S]*?)\}/g;
+const extractSolidityInterface = (filePath: string): string | null => {
+    try {
+        const solidityCode: string = fs.readFileSync(filePath, 'utf-8');
+        const lines: string[] = solidityCode.split('\n');
+        let isInsideContract = false;
+        let interfaceContent: string[] = [];
+        let contractName = '';
 
-    const matches: RegExpMatchArray[] = [...solidityCode.matchAll(interfacePattern)];
+        for (const line of lines) {
+            if (!isInsideContract) {
+                if (line.trim().startsWith('contract ')) {
+                    isInsideContract = true;
+                    const contractParts = line.trim().split(' ');
+                    contractName = contractParts[1];
+                    interfaceContent.push(`pragma solidity ^0.8.19;\n\ninterface I${contractName} {`);
+                }
+            } else {
+                if (line.trim().startsWith('function ')) {
+                    const funcParts = line.trim().split(' ');
+                    const funcDeclaration = funcParts.slice(1).join(' ');
+                    interfaceContent.push(`    ${funcDeclaration};`);
+                } else if (line.trim() === '}') {
+                    isInsideContract = false;
+                    interfaceContent.push('}');
+                }
+            }
+        }
 
-    const interfaces: string[] = matches.map((match) => {
-        const [, interfaceName, interfaceContent] = match;
-        return `interface ${interfaceName} ${interfaceContent}`;
-    });
+        if (!contractName) {
+            throw new Error('No contract found in the Solidity file.');
+        }
 
-    return interfaces.join('\n\n')
+        return interfaceContent.join('\n');
+    } catch (error) {
+        console.error(`Error reading or extracting contract interface from the Solidity file: ${error}`);
+        return null;
+    }
 }
 
 if (options.path) {
@@ -32,6 +57,6 @@ if (options.path) {
     const filepath = `${__dirname}/${options.path}`;
     console.log("File Loaded: ", filepath);
     const iface = extractSolidityInterface(filepath);
-    console.log(iface);
-
+    console.log("Interface: ", iface);
+    fs.writeFileSync(path.join(__dirname, `I${options.path}`), iface);
 }
