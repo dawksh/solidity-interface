@@ -1,3 +1,6 @@
+#!/usr/bin/env node
+
+
 const { Command } = require("commander");
 const figlet = require("figlet");
 const fs = require("fs");
