@@ -1,6 +1,6 @@
 {
   "name": "solidity-interface",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A simple CLI to generate Solidity interfaces from contract files.",
   "main": "dist/index.js",
   "bin": {
