@@ -52,10 +52,13 @@ if (options.path) {
     console.log("\n");
     const filepath = `${options.path}`;
     console.log("File Loaded: ", filepath);
-    const iface = extractSolidityInterface(filepath);
-    fs.writeFileSync(path.join(__dirname, `I${options.path} `), iface);
+    const iface = extractSolidityInterface(options.path);
+    const fname = "I" + options.path.split("/").splice(-1)[0].split(".")[0] + ".sol";
+    fs.writeFile(path.dirname(options.path) + `/${fname}`, iface, (err) => {
+        console.log(err);
+    });
     console.log("\n");
-    console.log("Successfully Wrote Interface to:", `${__dirname} /I${options.path}`);
+    console.log("Successfully Wrote Interface to:", path.dirname(options.path) + `/${fname}`);
     console.log("\n");
 }
 //# sourceMappingURL=index.js.map
