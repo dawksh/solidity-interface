@@ -55,7 +55,9 @@ if (options.path) {
     const iface = extractSolidityInterface(options.path);
     const fname = "I" + options.path.split("/").splice(-1)[0].split(".")[0] + ".sol";
     fs.writeFile(path.dirname(options.path) + `/${fname}`, iface, (err) => {
-        console.log(err);
+        if (err) {
+            console.log(err);
+        }
     });
     console.log("\n");
     console.log("Successfully Wrote Interface to:", path.dirname(options.path) + `/${fname}`);
