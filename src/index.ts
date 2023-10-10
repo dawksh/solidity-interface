@@ -27,19 +27,21 @@ const extractSolidityInterface = (filePath: string): string | null => {
                     isInsideContract = true;
                     const contractParts = line.trim().split(' ');
                     contractName = contractParts[1];
-                    interfaceContent.push(`pragma solidity ^0.8.19;\n\ninterface I${contractName} {`);
+                    interfaceContent.push(`pragma solidity ^0.8.19;`);
+                    interfaceContent.push(`interface I${contractName} {`);
                 }
             } else {
                 if (line.trim().startsWith('function ')) {
                     const funcParts = line.trim().split(' ');
-                    const funcDeclaration = funcParts.slice(1).join(' ');
-                    interfaceContent.push(`    ${funcDeclaration};`);
-                } else if (line.trim() === '}') {
-                    isInsideContract = false;
-                    interfaceContent.push('}');
+                    if (funcParts.includes("{")) {
+                        funcParts.splice(funcParts.indexOf("{"), 1);
+                    }
+                    const funcDeclaration = funcParts.join(' ');
+                    interfaceContent.push(`    ${funcDeclaration}; `);
                 }
             }
         }
+        interfaceContent.push(`}`);
 
         if (!contractName) {
             throw new Error('No contract found in the Solidity file.');
@@ -57,6 +59,8 @@ if (options.path) {
     const filepath = `${__dirname}/${options.path}`;
     console.log("File Loaded: ", filepath);
     const iface = extractSolidityInterface(filepath);
-    console.log("Interface: ", iface);
     fs.writeFileSync(path.join(__dirname, `I${options.path}`), iface);
+    console.log("\n")
+    console.log("Successfully Wrote Interface to:", `${__dirname}/I${options.path}`)
+    console.log("\n")
 }
